@@ -4,11 +4,7 @@ import 'dart:io';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:file_picker/file_picker.dart'; // Import du package file_picker
 
-void main() {
-  runApp(ProfileApp());
-}
-
-class ProfileApp extends StatelessWidget {
+class Creecomptenou extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

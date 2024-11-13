@@ -1,5 +1,6 @@
 import 'package:app/departinterface/home.dart';
 import 'package:app/departinterface/text.dart';
+import 'package:app/loginpage/authmaman.dart';
 import 'package:flutter/material.dart';
 
 class Premier extends StatefulWidget {
@@ -116,7 +117,7 @@ class _Premier extends State<Premier> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) =>
-                                                Home(), // Page suivante
+                                                Authmaman(), // Page suivante
                                           ),
                                         );
                                       } else {

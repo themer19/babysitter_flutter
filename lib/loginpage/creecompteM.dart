@@ -1,13 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-void main() {
-  runApp(ProfileApp());
-}
-
-class ProfileApp extends StatelessWidget {
+class Creecomptem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,7 +41,8 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+        margin: EdgeInsets.all(0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 100),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -53,75 +52,71 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ],
           ),
         ),
-        child: Scrollbar(
-          thumbVisibility: true, // Afficher le curseur de défilement
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
-                        backgroundImage:
-                            _image != null ? FileImage(_image!) : null,
-                        child: _image == null
-                            ? Icon(Icons.person,
-                                size: 50,
-                                color: const Color.fromARGB(255, 56, 182, 205))
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: GestureDetector(
-                          onTap: _pickImage,
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 42, 195, 218),
-                              shape: BoxShape.circle,
-                            ),
-                            child:
-                                Icon(Icons.edit, color: Colors.white, size: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      backgroundImage:
+                          _image != null ? FileImage(_image!) : null,
+                      child: _image == null
+                          ? Icon(Icons.person,
+                              size: 50,
+                              color: const Color.fromARGB(255, 56, 182, 205))
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 42, 195, 218),
+                            shape: BoxShape.circle,
                           ),
+                          child:
+                              Icon(Icons.edit, color: Colors.white, size: 20),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 30),
-                buildTextField('Nom', Icons.person),
-                buildTextField('Prénom', Icons.person),
-                buildTextField('Date de naissance', Icons.calendar_today,
-                    readOnly: true),
-                buildTextField('Cin', Icons.badge),
-                buildTextField('Email', Icons.email),
-                buildPhoneField(),
-                buildDropdownField('Genre', Icons.transgender),
-                SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 56, 182, 205),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                  ],
+                ),
+              ),
+              SizedBox(height: 30),
+              buildTextField('Nom', Icons.person),
+              buildTextField('Prénom', Icons.person),
+              buildTextField('Date de naissance', Icons.calendar_today,
+                  readOnly: true),
+              buildTextField('Cin', Icons.badge),
+              buildTextField('Email', Icons.email),
+              buildPhoneField(),
+              buildDropdownField('Genre', Icons.transgender),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 56, 182, 205),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
