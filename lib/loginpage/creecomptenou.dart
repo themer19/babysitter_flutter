@@ -26,6 +26,8 @@ class FillProfileScreen extends StatefulWidget {
 class _FillProfileScreenState extends State<FillProfileScreen> {
   File? _image;
   String? _filePath; // Variable pour stocker le chemin du fichier sélectionné
+  TextEditingController dateNaissanceController =
+      TextEditingController(); // Contrôleur pour la date de naissance
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -111,8 +113,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 SizedBox(height: 30),
                 buildTextField('Nom', Icons.person),
                 buildTextField('Prénom', Icons.person),
-                buildTextField('Date de naissance', Icons.calendar_today,
-                    readOnly: true),
+                buildDateField(), // Remplacer par le champ date de naissance
                 buildTextField('Cin', Icons.badge),
                 buildTextField('Email', Icons.email),
                 buildPhoneField(),
@@ -287,47 +288,78 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 0, 0, 0),
+              color: const Color.fromARGB(255, 255, 255, 255),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Row(
-              children: [
-                DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedCountryCode,
-                    items: countries.map((country) {
-                      return DropdownMenuItem<String>(
-                        value: country['code'],
-                        child: Text(
-                          '${country['name']} (${country['code']})',
-                          style: TextStyle(
-                              color: const Color.fromARGB(255, 251, 251, 251)),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (_) {},
-                  ),
-                ),
-              ],
+            child: DropdownButton<String>(
+              value: selectedCountryCode,
+              onChanged: (value) {
+                setState(() {
+                  selectedCountryCode = value!;
+                });
+              },
+              items: countries.map<DropdownMenuItem<String>>((country) {
+                return DropdownMenuItem<String>(
+                  value: country['code']!,
+                  child: Text('${country['code']} ${country['name']}'),
+                );
+              }).toList(),
             ),
           ),
           SizedBox(width: 10),
           Expanded(
             child: TextField(
+              style: TextStyle(color: Colors.black),
+              keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: const Color.fromARGB(255, 255, 253, 253),
-                hintText: 'Phone Number',
-                hintStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+                fillColor: const Color.fromARGB(255, 255, 255, 255),
+                labelText: 'Phone number',
+                labelStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
               ),
-              keyboardType: TextInputType.phone,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildDateField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: TextFormField(
+        controller: dateNaissanceController,
+        readOnly: true, // On empêche l'utilisateur de saisir manuellement
+        style: TextStyle(color: Colors.black),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromARGB(255, 255, 255, 255),
+          prefixIcon: Icon(Icons.calendar_today, color: Colors.black),
+          labelText: 'Date de naissance',
+          labelStyle: TextStyle(color: Colors.black),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        onTap: () async {
+          DateTime? selectedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+          );
+          if (selectedDate != null) {
+            setState(() {
+              dateNaissanceController.text = "${selectedDate.toLocal()}"
+                  .split(' ')[0]; // Format YYYY-MM-DD
+            });
+          }
+        },
       ),
     );
   }
@@ -336,31 +368,25 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: DropdownButtonFormField<String>(
-        dropdownColor: Colors.white, // Fond de la liste déroulante en blanc
-        style: TextStyle(
-            color: const Color.fromARGB(255, 0, 0, 0)), // Texte en noir
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: const Color.fromARGB(
-              255, 255, 255, 255), // Fond de l'entrée en blanc
-          prefixIcon: Icon(icon,
-              color: const Color.fromARGB(255, 0, 0, 0)), // Icône en noir
-          labelText: labelText,
-          labelStyle: TextStyle(
-              color:
-                  const Color.fromARGB(255, 0, 0, 0)), // Texte du label en noir
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        items: ['Male', 'Female', 'Other'].map((String value) {
+        items: <String>['Homme', 'Femme', 'Autre']
+            .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),
           );
         }).toList(),
-        onChanged: (_) {},
+        onChanged: (value) {},
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: TextStyle(color: Colors.black),
+          filled: true,
+          fillColor: const Color.fromARGB(255, 255, 255, 255),
+          prefixIcon: Icon(icon, color: Colors.black),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+        ),
       ),
     );
   }

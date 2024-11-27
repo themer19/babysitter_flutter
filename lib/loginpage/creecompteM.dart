@@ -1,8 +1,7 @@
-import 'dart:math';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Creecomptem extends StatelessWidget {
@@ -26,6 +25,7 @@ class FillProfileScreen extends StatefulWidget {
 
 class _FillProfileScreenState extends State<FillProfileScreen> {
   File? _image;
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -53,70 +53,82 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      backgroundImage:
-                          _image != null ? FileImage(_image!) : null,
-                      child: _image == null
-                          ? Icon(Icons.person,
-                              size: 50,
-                              color: const Color.fromARGB(255, 56, 182, 205))
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 42, 195, 218),
-                            shape: BoxShape.circle,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        backgroundImage:
+                            _image != null ? FileImage(_image!) : null,
+                        child: _image == null
+                            ? Icon(Icons.person,
+                                size: 50,
+                                color: const Color.fromARGB(255, 56, 182, 205))
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 42, 195, 218),
+                              shape: BoxShape.circle,
+                            ),
+                            child:
+                                Icon(Icons.edit, color: Colors.white, size: 20),
                           ),
-                          child:
-                              Icon(Icons.edit, color: Colors.white, size: 20),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 30),
-              buildTextField('Nom', Icons.person),
-              buildTextField('Prénom', Icons.person),
-              buildTextField('Date de naissance', Icons.calendar_today,
-                  readOnly: true),
-              buildTextField('Cin', Icons.badge),
-              buildTextField('Email', Icons.email),
-              buildPhoneField(),
-              buildDropdownField('Genre', Icons.transgender),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 56, 182, 205),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 30),
+                buildTextField('Nom', Icons.person),
+                buildTextField('Prénom', Icons.person),
+                buildTextField('Date de naissance', Icons.calendar_today,
+                    readOnly: true),
+                buildTextField('Cin', Icons.badge),
+                buildTextField('Email', Icons.email),
+                buildPhoneField(),
+                buildDropdownField('Genre', Icons.transgender),
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate the form fields
+                      if (_formKey.currentState?.validate() ?? false) {
+                        // If form is valid, proceed
+                        print('Form is valid');
+                      } else {
+                        print('Form is not valid');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 56, 182, 205),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -127,7 +139,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       {bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: TextField(
+      child: TextFormField(
         readOnly: readOnly,
         style: TextStyle(
             color: Colors.black), // Ajout de cette ligne pour le texte en noir
@@ -145,6 +157,12 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             borderSide: BorderSide.none,
           ),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Ce champ ne peut pas être vide';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -193,7 +211,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
           SizedBox(width: 10),
           Expanded(
-            child: TextField(
+            child: TextFormField(
               decoration: InputDecoration(
                 filled: true,
                 fillColor: const Color.fromARGB(255, 255, 253, 253),
@@ -205,6 +223,12 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 ),
               ),
               keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer votre numéro de téléphone';
+                }
+                return null;
+              },
             ),
           ),
         ],
@@ -241,6 +265,12 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           );
         }).toList(),
         onChanged: (_) {},
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Veuillez sélectionner un genre';
+          }
+          return null;
+        },
       ),
     );
   }

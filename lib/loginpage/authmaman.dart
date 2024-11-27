@@ -3,7 +3,42 @@ import 'package:app/loginpage/creecompteM.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Authmaman extends StatelessWidget {
+class Authmaman extends StatefulWidget {
+  @override
+  _AuthmamanState createState() => _AuthmamanState();
+}
+
+class _AuthmamanState extends State<Authmaman> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String? _emailError;
+  String? _passwordError;
+
+  void _validateAndSubmit() {
+    setState(() {
+      _emailError = _validateEmail(_emailController.text);
+      _passwordError = _passwordController.text.isEmpty
+          ? 'Veuillez entrer un mot de passe'
+          : null;
+    });
+
+    if (_emailError == null && _passwordError == null) {
+      // Tous les champs sont valides, vous pouvez continuer avec l'action de connexion.
+      print('Validation réussie, traitement de la connexion');
+    } else {
+      print('Validation échouée, veuillez remplir les champs correctement');
+    }
+  }
+
+  String? _validateEmail(String email) {
+    if (email.isEmpty) {
+      return 'Veuillez entrer un email';
+    } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+\$').hasMatch(email)) {
+      return 'Veuillez entrer un email valide';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,9 +46,9 @@ class Authmaman extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.orange[900]!,
-              Colors.orange[800]!,
-              Colors.orange[400]!,
+              Colors.red[200]!,
+              Colors.red[300]!,
+              Colors.red[100]!,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -48,6 +83,7 @@ class Authmaman extends StatelessWidget {
                   SizedBox(height: 32.0),
                   // Champ Email
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.email,
                           color: Color.fromARGB(179, 0, 0, 0)),
@@ -59,12 +95,14 @@ class Authmaman extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: BorderSide.none,
                       ),
+                      errorText: _emailError,
                     ),
                     style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                   SizedBox(height: 16.0),
                   // Champ Mot de passe
                   TextField(
+                    controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       prefixIcon:
@@ -77,8 +115,9 @@ class Authmaman extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: BorderSide.none,
                       ),
+                      errorText: _passwordError,
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.visibility, color: Colors.white70),
+                        icon: Icon(Icons.visibility, color: Colors.white),
                         onPressed: () {},
                       ),
                     ),
@@ -102,9 +141,9 @@ class Authmaman extends StatelessWidget {
                   SizedBox(height: 16.0),
                   // Bouton de connexion
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _validateAndSubmit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 56, 182, 205),
+                      backgroundColor: Colors.blue[200],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -123,7 +162,7 @@ class Authmaman extends StatelessWidget {
                     onPressed: () {},
                     child: Text(
                       'Mot de passe oublié ?',
-                      style: TextStyle(color: Colors.white54),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                   SizedBox(height: 16.0),
@@ -138,7 +177,7 @@ class Authmaman extends StatelessWidget {
                             .center, // Texte centré à l'intérieur du bouton
                       ),
                       style: TextButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 241, 8, 129),
+                        backgroundColor: Colors.blue[200],
                         foregroundColor: Colors.white,
                         minimumSize:
                             Size(200, 50), // Largeur = 200, Hauteur = 50
@@ -158,11 +197,11 @@ class Authmaman extends StatelessWidget {
                   ),
                   SizedBox(height: 16.0),
                   // Séparateur et autres options de connexion
-                  Divider(color: Colors.white54),
+                  Divider(color: Colors.white),
                   SizedBox(height: 16.0),
                   Text(
                     'ou continuez avec',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16.0),
@@ -217,7 +256,7 @@ class Authmaman extends StatelessWidget {
                       },
                       child: Text(
                         "Vous n'avez pas de compte ? S'inscrire",
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
