@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:app/barrenav/bar.dart';
 import 'package:app/loginpage/authnounou.dart';
 import 'package:app/loginpage/creecompteM.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Authmaman extends StatefulWidget {
   @override
@@ -23,18 +28,80 @@ class _AuthmamanState extends State<Authmaman> {
     });
 
     if (_emailError == null && _passwordError == null) {
-      // Tous les champs sont valides, vous pouvez continuer avec l'action de connexion.
+      _sendLoginRequest(_emailController.text, _passwordController.text);
       print('Validation réussie, traitement de la connexion');
     } else {
       print('Validation échouée, veuillez remplir les champs correctement');
     }
   }
 
+  Future<void> _sendLoginRequest(String email, String password) async {
+    final url = Uri.parse(
+        'http://192.168.1.25:8088/auth/login'); // Remplacez par l'URL de votre API
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'password': password,
+          'role': "parent",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Connexion réussie
+        final data = json.decode(response.body);
+        final id = data['idParent'].toString();
+        print(id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connexion réussie')),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Bar(id: id), // Page suivante
+          ),
+        );
+      } else {
+        // Gestion des erreurs
+        final errorData = json.decode(response.body);
+        print('Erreur : ${errorData['message']}');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Erreur'),
+            content: Text(errorData['message'] ?? 'Une erreur est survenue'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print('Erreur de connexion : $e');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Erreur'),
+          content: Text('Impossible de se connecter au serveur.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   String? _validateEmail(String email) {
     if (email.isEmpty) {
       return 'Veuillez entrer un email';
-    } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+\$').hasMatch(email)) {
-      return 'Veuillez entrer un email valide';
     }
     return null;
   }
